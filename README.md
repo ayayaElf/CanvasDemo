@@ -1,0 +1,2 @@
+# CanvasDemo
+用HTML5中canvas做的一个刮刮乐的demo
