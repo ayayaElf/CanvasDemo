@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style media="screen">
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .wrap{
+            margin: 100px auto;
+            width: 300px;
+            height: 300px;
+        }
+        canvas{
+            border: 1px solid #000;
+            background-size: 100% 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <canvas id="myCanvas" width="300" height="300"></canvas>
+    </div>
+    <script type="text/javascript">
+        var myCanvas = document.getElementById('myCanvas');
+        var ctx = myCanvas.getContext('2d');
+        var lastX, lastY, nowX, nowY;
+
+        init();
+
+        function init(){
+            ctx.fillStyle = '#ccc';
+            ctx.fillRect(0, 0, 300, 300);
+            var oImg = new Image();
+            var r = Math.random();
+            oImg.src = r < 0.5 ? './img/1.png' : './img/2.png';
+            oImg.onload = function(){
+                myCanvas.style.backgroundImage = 'url(' + oImg.src + ')';
+                ctx.globalCompositeOperation = 'destination-out';
+                document.addEventListener('mousedown', mouseDown, false);
+            }
+        }
+
+        function mouseDown(e){
+            lastX = e.clientX - myCanvas.offsetLeft;
+            lastY = e.clientY - myCanvas.offsetTop;
+            document.addEventListener('mousemove', mouseMove, false);
+            document.addEventListener('mouseup', mouseUp, false);
+        }
+
+        function mouseMove(e){
+            nowX = e.clientX - myCanvas.offsetLeft;
+            nowY = e.clientY - myCanvas.offsetTop;
+            ctx.beginPath();
+            ctx.lineWidth = '40';
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(nowX, nowY);
+            ctx.stroke();
+            ctx.closePath();
+            ctx.arc(nowX, nowY, 20, 0, Math.PI * 2, 0);
+            ctx.fill();
+            lastX = nowX;
+            lastY = nowY;
+        }
+
+        function mouseUp(){
+            document.removeEventListener('mousemove', mouseMove, false);
+            clearAll();
+        }
+
+        function clearAll(){
+            var d = ctx.getImageData(0, 0, 300, 300);
+            var len = d.data.length;
+            var num = 0;
+            for(var i = 0; i < len; i+=4){
+                if(d.data[i] == 0){
+                    num ++;
+                }
+            }
+            if(num > 300 * 300 * 0.8){
+                ctx.clearRect(0, 0, 300, 300);
+            }
+        }
+    </script>
+</body>
+</html>
